@@ -1,0 +1,87 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("archive/Mumbai.csv")
+
+LiftAvailable = True
+CarParking = True
+PowerBackup = True
+ClubHouse = True
+JoggingTrack = False
+LandscapedGardens = True
+SwimmingPool = False
+Gymnasium = True
+NoOfBedrooms = 2
+
+minimum = 6000000
+maximum = 8000000
+
+def Display(df):
+    if LiftAvailable:
+        df = df.loc[df["LiftAvailable"] == 1]
+    if CarParking:
+        df = df.loc[df["CarParking"] == 1]
+    if PowerBackup:
+        df = df.loc[df["PowerBackup"] == 1]
+    if ClubHouse:
+        df = df.loc[df["ClubHouse"] == 1]
+    if JoggingTrack:
+        df = df.loc[df["JoggingTrack"] == 1]
+    if SwimmingPool:
+        df = df.loc[df["SwimmingPool"] == 1]
+    if Gymnasium:
+        df = df.loc[df["Gymnasium"] == 1]
+    if LandscapedGardens:
+        df = df.loc[df["LandscapedGardens"] == 1]
+
+    df = df.loc[(df['Price'] <= maximum) & (df['Price'] >= minimum)]
+
+    print(df['SwimmingPool'])
+
+    # Done
+    plt.title("Number of Bedrooms v/s Price")
+    plt.scatter(df['Price'],df.NoOfBedrooms,label='graph')
+    plt.yticks([1,2,3,4])
+    plt.xlabel('Price of bedrooms')
+    plt.ylabel('No. of bedrooms')
+    plt.show()
+
+    df = df.loc[df["NoOfBedrooms"] == NoOfBedrooms]
+
+    # Done
+    x_1 = list(df.Area)
+    y_1 = list(df.Price)
+    plt.figure(figsize=(6,4))
+    plt.scatter(x_1,y_1)
+    plt.title("Area of rooms v/s Price of rooms")
+    plt.xlabel('Area of flats')
+    plt.ylabel('Price of flats')
+    plt.show()
+
+    # Done
+    plt.title("No. of counts of flats in respective locations")
+    plt.xlabel('Locations')
+    plt.ylabel('Count')
+    df['Location'].value_counts().plot(kind='bar',color='brown')
+    plt.show()
+
+    slices = []
+    labels = []
+    start = minimum
+    it = 1000000
+
+    while(start < maximum):
+        if(start + it != maximum):
+            slices.append(len(df.loc[(df['Price'] >= start) & (df['Price'] < start + it)].index))
+        else:
+            slices.append(len(df.loc[(df['Price'] >= start) & (df['Price'] <= start + it)].index))
+        labels.append("{}-{}".format(start, start + it))
+        start += it
+
+    #print(slices, labels)
+    plt.title("No. of flats available in given range of prices")
+    plt.pie(slices,labels = labels,autopct = '%.1f %%')
+    plt.show()
+
+Display(df)
